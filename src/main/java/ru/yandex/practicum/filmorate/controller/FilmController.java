@@ -1,7 +1,5 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import ru.yandex.practicum.filmorate.exception.ErrorResponse;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -37,7 +35,6 @@ public class FilmController {
     public ResponseEntity<Film> create(@Valid @RequestBody Film film) {
         log.info("Получен запрос на добавление фильма: {}", film);
 
-        // Дополнительная валидация даты релиза
         if (film.getReleaseDate().isBefore(EARLIEST_RELEASE_DATE)) {
             log.warn("Ошибка валидации: дата релиза {} раньше 28 декабря 1895 года", film.getReleaseDate());
             throw new ValidationException("Дата релиза не может быть раньше 28 декабря 1895 года");
@@ -58,7 +55,6 @@ public class FilmController {
             throw new NotFoundException("Фильм с id " + film.getId() + " не найден");
         }
 
-        // Дополнительная валидация даты релиза
         if (film.getReleaseDate().isBefore(EARLIEST_RELEASE_DATE)) {
             log.warn("Ошибка валидации: дата релиза {} раньше 28 декабря 1895 года", film.getReleaseDate());
             throw new ValidationException("Дата релиза не может быть раньше 28 декабря 1895 года");
@@ -67,38 +63,5 @@ public class FilmController {
         films.put(film.getId(), film);
         log.info("Фильм с id {} успешно обновлён", film.getId());
         return ResponseEntity.ok(film);
-    }
-
-    @ExceptionHandler(ValidationException.class)
-    public ResponseEntity<ErrorResponse> handleValidationException(ValidationException ex) {
-        log.error("Ошибка валидации: {}", ex.getMessage());
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(new ErrorResponse("Ошибка валидации", ex.getMessage()));
-    }
-
-    @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleNotFoundException(NotFoundException ex) {
-        log.error("Сущность не найдена: {}", ex.getMessage());
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(new ErrorResponse("Сущность не найдена", ex.getMessage()));
-    }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleOtherExceptions(Exception ex) {
-        log.error("Внутренняя ошибка сервера: {}", ex.getMessage(), ex);
-        return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ErrorResponse("Внутренняя ошибка сервера", ex.getMessage()));
-    }
-
-    @ExceptionHandler(org.springframework.web.bind.MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        String errorMessage = ex.getBindingResult().getAllErrors().get(0).getDefaultMessage();
-        log.error("Ошибка валидации: {}", errorMessage);
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(new ErrorResponse("Ошибка валидации", errorMessage));
     }
 }
