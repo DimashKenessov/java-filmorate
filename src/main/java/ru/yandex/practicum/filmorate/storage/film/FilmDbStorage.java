@@ -28,26 +28,28 @@ public class FilmDbStorage implements FilmStorage {
     private final MpaDao mpaDao;
     private final GenreDao genreDao;
 
-
     public FilmDbStorage(JdbcTemplate jdbcTemplate, MpaDao mpaDao, GenreDao genreDao) {
         this.jdbcTemplate = jdbcTemplate;
         this.mpaDao = mpaDao;
         this.genreDao = genreDao;
     }
 
-    private final RowMapper<Film> filmMapper = (rs, rowNum) -> {
-        Film film = new Film();
-        film.setId(rs.getInt("id"));
-        film.setName(rs.getString("name"));
-        film.setDescription(rs.getString("description"));
-        film.setReleaseDate(rs.getDate("release_date").toLocalDate());
-        film.setDuration(rs.getInt("duration"));
-        int mpaId = rs.getInt("mpa_id");
-        if (mpaId != 0) {
-            mpaDao.findById(mpaId).ifPresent(film::setMpa);
-        }
-        return film;
-    };
+
+    private RowMapper<Film> getFilmMapper() {
+        return (rs, rowNum) -> {
+            Film film = new Film();
+            film.setId(rs.getInt("id"));
+            film.setName(rs.getString("name"));
+            film.setDescription(rs.getString("description"));
+            film.setReleaseDate(rs.getDate("release_date").toLocalDate());
+            film.setDuration(rs.getInt("duration"));
+            int mpaId = rs.getInt("mpa_id");
+            if (mpaId != 0) {
+                mpaDao.findById(mpaId).ifPresent(film::setMpa);
+            }
+            return film;
+        };
+    }
 
     private void loadGenres(Film film) {
         String sql = "SELECT g.id, g.name FROM genres g " +
@@ -64,7 +66,7 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public List<Film> findAll() {
         String sql = "SELECT * FROM films";
-        List<Film> films = jdbcTemplate.query(sql, filmMapper);
+        List<Film> films = jdbcTemplate.query(sql, getFilmMapper());
         films.forEach(this::loadGenres);
         return films;
     }
@@ -72,7 +74,7 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public Film findById(int id) {
         String sql = "SELECT * FROM films WHERE id = ?";
-        List<Film> films = jdbcTemplate.query(sql, filmMapper, id);
+        List<Film> films = jdbcTemplate.query(sql, getFilmMapper(), id);
         if (films.isEmpty()) {
             throw new NotFoundException("Фильм с id " + id + " не найден");
         }
@@ -154,7 +156,7 @@ public class FilmDbStorage implements FilmStorage {
     public List<Film> getPopular(int count) {
         String sql = "SELECT f.* FROM films f LEFT JOIN likes l ON f.id = l.film_id " +
                 "GROUP BY f.id ORDER BY COUNT(l.user_id) DESC LIMIT ?";
-        List<Film> films = jdbcTemplate.query(sql, filmMapper, count);
+        List<Film> films = jdbcTemplate.query(sql, getFilmMapper(), count);
         films.forEach(this::loadGenres);
         return films;
     }
