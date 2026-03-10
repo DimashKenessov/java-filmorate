@@ -8,7 +8,6 @@ import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -34,23 +33,20 @@ public class FilmService {
     }
 
     public void addLike(int filmId, int userId) {
-        Film film = filmStorage.findById(filmId);
+        filmStorage.findById(filmId);
         userStorage.findById(userId);
-        film.getLikes().add(userId);
+        filmStorage.addLike(filmId, userId);
         log.info("User {} liked film {}", userId, filmId);
     }
 
     public void removeLike(int filmId, int userId) {
-        Film film = filmStorage.findById(filmId);
+        filmStorage.findById(filmId);
         userStorage.findById(userId);
-        film.getLikes().remove(userId);
+        filmStorage.removeLike(filmId, userId);
         log.info("User {} removed like from film {}", userId, filmId);
     }
 
     public List<Film> getPopular(int count) {
-        return filmStorage.findAll().stream()
-                .sorted((f1, f2) -> Integer.compare(f2.getLikes().size(), f1.getLikes().size()))
-                .limit(count)
-                .collect(Collectors.toList());
+        return filmStorage.getPopular(count);
     }
 }

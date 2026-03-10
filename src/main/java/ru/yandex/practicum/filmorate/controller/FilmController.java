@@ -53,7 +53,6 @@ public class FilmController {
         return ResponseEntity.ok(updated);
     }
 
-
     @PutMapping("/{id}/like/{userId}")
     public void addLike(@PathVariable int id, @PathVariable int userId) {
         log.info("PUT /films/{}/like/{}", id, userId);
