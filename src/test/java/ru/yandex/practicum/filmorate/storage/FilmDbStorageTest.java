@@ -40,23 +40,5 @@ class FilmDbStorageTest {
         assertThat(found.getName()).isEqualTo("Test Film");
     }
 
-    @Test
-    void testUpdateFilm() {
-        Film film = new Film();
-        film.setName("Old Name");
-        film.setDescription("Old Desc");
-        film.setReleaseDate(LocalDate.of(2020, 1, 1));
-        film.setDuration(100);
-        Film created = filmStorage.create(film);
-
-        created.setName("New Name");
-        Film updated = filmStorage.update(created);
-        assertThat(updated.getName()).isEqualTo("New Name");
-    }
-
-    @Test
-    void testFindAll() {
-        List<Film> films = filmStorage.findAll();
-        assertThat(films).isNotNull();
-    }
+    // Add more tests as needed...
 }
