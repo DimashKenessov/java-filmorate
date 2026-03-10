@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.storage.film;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -24,12 +23,17 @@ import java.util.*;
 @Slf4j
 @Repository
 @Primary
-@RequiredArgsConstructor
-@SuppressWarnings("all")
 public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
     private final MpaDao mpaDao;
     private final GenreDao genreDao;
+
+
+    public FilmDbStorage(JdbcTemplate jdbcTemplate, MpaDao mpaDao, GenreDao genreDao) {
+        this.jdbcTemplate = jdbcTemplate;
+        this.mpaDao = mpaDao;
+        this.genreDao = genreDao;
+    }
 
     private final RowMapper<Film> filmMapper = (rs, rowNum) -> {
         Film film = new Film();
