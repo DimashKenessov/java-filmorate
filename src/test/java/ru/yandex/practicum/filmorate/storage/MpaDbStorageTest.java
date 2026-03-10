@@ -31,17 +31,18 @@ class MpaDbStorageTest {
         List<Mpa> mpas = mpaStorage.findAll();
         assertThat(mpas).hasSize(5);
         assertThat(mpas.get(0).getName()).isEqualTo("G");
+        assertThat(mpas.get(4).getName()).isEqualTo("NC-17");
     }
 
     @Test
-    void findById_ValidId_ReturnsMpa() {
+    void findById_WithValidId_ShouldReturnMpa() {
         Optional<Mpa> mpa = mpaStorage.findById(1);
         assertThat(mpa).isPresent();
         assertThat(mpa.get().getName()).isEqualTo("G");
     }
 
     @Test
-    void findById_InvalidId_ReturnsEmpty() {
+    void findById_WithInvalidId_ShouldReturnEmpty() {
         Optional<Mpa> mpa = mpaStorage.findById(999);
         assertThat(mpa).isEmpty();
     }

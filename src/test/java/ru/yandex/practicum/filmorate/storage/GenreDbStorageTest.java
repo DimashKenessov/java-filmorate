@@ -31,17 +31,18 @@ class GenreDbStorageTest {
         List<Genre> genres = genreStorage.findAll();
         assertThat(genres).hasSize(6);
         assertThat(genres.get(0).getName()).isEqualTo("Комедия");
+        assertThat(genres.get(5).getName()).isEqualTo("Боевик");
     }
 
     @Test
-    void findById_ValidId_ReturnsGenre() {
+    void findById_WithValidId_ShouldReturnGenre() {
         Optional<Genre> genre = genreStorage.findById(1);
         assertThat(genre).isPresent();
         assertThat(genre.get().getName()).isEqualTo("Комедия");
     }
 
     @Test
-    void findById_InvalidId_ReturnsEmpty() {
+    void findById_WithInvalidId_ShouldReturnEmpty() {
         Optional<Genre> genre = genreStorage.findById(999);
         assertThat(genre).isEmpty();
     }
