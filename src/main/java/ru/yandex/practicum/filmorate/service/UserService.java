@@ -34,7 +34,7 @@ public class UserService {
     }
 
     public void addFriend(int userId, int friendId) {
-        // Verify both users exist
+
         userStorage.findById(userId);
         userStorage.findById(friendId);
         userStorage.addFriend(userId, friendId);

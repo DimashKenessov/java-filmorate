@@ -99,7 +99,7 @@ class FilmDbStorageTest {
 
     @Test
     void addLike_ShouldIncreaseLikesCount() {
-        // First create a user (simplified – we need a user in DB)
+
         jdbcTemplate.update("INSERT INTO users (email, login, name, birthday) VALUES (?, ?, ?, ?)",
                 "test@user.com", "testuser", "Test User", "2000-01-01");
         Integer userId = jdbcTemplate.queryForObject("SELECT id FROM users WHERE login = 'testuser'", Integer.class);
@@ -113,7 +113,7 @@ class FilmDbStorageTest {
 
         filmStorage.addLike(created.getId(), userId);
 
-        // Verify like count via getPopular or custom query
+
         List<Film> popular = filmStorage.getPopular(10);
         assertThat(popular).anyMatch(f -> f.getId() == created.getId());
     }
