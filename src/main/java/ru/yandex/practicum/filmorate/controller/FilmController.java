@@ -70,4 +70,10 @@ public class FilmController {
         log.info("GET /films/popular?count={}", count);
         return filmService.getPopular(count);
     }
+
+    @GetMapping("/common")
+    public List<Film> getCommonFilms(@RequestParam int userId, @RequestParam int friendId) {
+        log.info("GET /films/common?userId={}&friendId={}", userId, friendId);
+        return filmService.getCommonFilms(userId, friendId);
+    }
 }
