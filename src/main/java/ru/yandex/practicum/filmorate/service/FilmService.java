@@ -49,4 +49,10 @@ public class FilmService {
     public List<Film> getPopular(int count) {
         return filmStorage.getPopular(count);
     }
+
+    public void delete(int id) {
+        filmStorage.findById(id);
+        filmStorage.delete(id);
+        log.info("Фильм с ID: {} удален", id);
+    }
 }

@@ -67,4 +67,10 @@ public class UserController {
         log.info("GET /users/{}/friends/common/{}", id, otherId);
         return userService.getCommonFriends(id, otherId);
     }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable int id) {
+        log.info("DELETE /users/{}", id);
+        userService.delete(id);
+    }
 }
