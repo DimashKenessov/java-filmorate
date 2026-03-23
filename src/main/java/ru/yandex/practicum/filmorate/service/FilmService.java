@@ -49,4 +49,9 @@ public class FilmService {
     public List<Film> getPopular(int count) {
         return filmStorage.getPopular(count);
     }
+
+    public List<Film> getRecommendations(int userId) {
+        userStorage.findById(userId);
+        return filmStorage.getRecommendations(userId);
+    }
 }
