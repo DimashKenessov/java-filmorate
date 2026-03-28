@@ -23,5 +23,5 @@ public class Film {
 
     private Mpa mpa;
     private Set<Genre> genres;
-
+    private Set<Director> directors;
 }
