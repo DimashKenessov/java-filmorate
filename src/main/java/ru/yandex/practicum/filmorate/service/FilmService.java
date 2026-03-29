@@ -56,5 +56,21 @@ public class FilmService {
             throw new ValidationException("Поиск по параметру был передан неверно");
         }
         return filmStorage.findFilmsBySearchQuery(query, by);
+    public void delete(int id) {
+        filmStorage.findById(id);
+        filmStorage.delete(id);
+        log.info("Фильм с ID: {} удален", id);
+    }
+
+    public List<Film> getRecommendations(int userId) {
+        userStorage.findById(userId);
+        return filmStorage.getRecommendations(userId);
+    }
+
+    public List<Film> getCommonFilms(int userId, int friendId) {
+        userStorage.findById(userId);
+        userStorage.findById(friendId);
+
+        return filmStorage.getCommonFilms(userId, friendId);
     }
 }
