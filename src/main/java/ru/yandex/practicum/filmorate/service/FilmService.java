@@ -50,6 +50,12 @@ public class FilmService {
         return filmStorage.getPopular(count);
     }
 
+    public void delete(int id) {
+        filmStorage.findById(id);
+        filmStorage.delete(id);
+        log.info("Фильм с ID: {} удален", id);
+    }
+
     public List<Film> getRecommendations(int userId) {
         userStorage.findById(userId);
         return filmStorage.getRecommendations(userId);
