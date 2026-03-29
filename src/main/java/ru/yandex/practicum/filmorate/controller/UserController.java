@@ -5,12 +5,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.FeedService;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import jakarta.validation.Valid;
+
 import java.util.List;
 
 @Slf4j
@@ -20,6 +23,7 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
     private final FilmService filmService;
+    private final FeedService feedService;
 
     @GetMapping
     public List<User> findAll() {
@@ -81,5 +85,10 @@ public class UserController {
     public List<Film> getRecommendations(@PathVariable int id) {
         log.info("GET /users/{}/recommendations", id);
         return filmService.getRecommendations(id);
+    }
+
+    @GetMapping("/{id}/feed")
+    public List<Event> getFeed(@PathVariable int id) {
+        return feedService.getUserFeed(id);
     }
 }
