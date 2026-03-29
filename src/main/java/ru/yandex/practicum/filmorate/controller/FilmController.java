@@ -75,6 +75,8 @@ public class FilmController {
     public void delete(@PathVariable int id) {
         log.info("DELETE /films/{}", id);
         filmService.delete(id);
+    }
+
     @GetMapping("/common")
     public List<Film> getCommonFilms(@RequestParam int userId, @RequestParam int friendId) {
         log.info("GET /films/common?userId={}&friendId={}", userId, friendId);

@@ -75,6 +75,8 @@ public class UserController {
     public void delete(@PathVariable int id) {
         log.info("DELETE /users/{}", id);
         userService.delete(id);
+    }
+
     @GetMapping("/{id}/recommendations")
     public List<Film> getRecommendations(@PathVariable int id) {
         log.info("GET /users/{}/recommendations", id);
