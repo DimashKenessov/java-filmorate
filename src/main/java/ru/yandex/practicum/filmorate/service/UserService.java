@@ -53,4 +53,10 @@ public class UserService {
     public List<User> getCommonFriends(int userId, int otherId) {
         return userStorage.getCommonFriends(userId, otherId);
     }
+
+    public void delete(int id) {
+        userStorage.findById(id);
+        userStorage.delete(id);
+        log.info("Пользователь с ID: {} удален", id);
+    }
 }

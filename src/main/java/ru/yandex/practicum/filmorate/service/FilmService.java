@@ -52,4 +52,22 @@ public class FilmService {
     public List<Film> getFilmsByDirector(int directorId, String sortBy) {
         return filmStorage.findFilmsByDirector(directorId, sortBy);
     }
+
+    public void delete(int id) {
+        filmStorage.findById(id);
+        filmStorage.delete(id);
+        log.info("Фильм с ID: {} удален", id);
+    }
+
+    public List<Film> getRecommendations(int userId) {
+        userStorage.findById(userId);
+        return filmStorage.getRecommendations(userId);
+    }
+
+    public List<Film> getCommonFilms(int userId, int friendId) {
+        userStorage.findById(userId);
+        userStorage.findById(friendId);
+
+        return filmStorage.getCommonFilms(userId, friendId);
+    }
 }
