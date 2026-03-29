@@ -216,6 +216,21 @@ public class FilmDbStorage implements FilmStorage {
         return recommendedFilmIds.stream().map(filmMap :: get).collect(Collectors.toList());
     }
 
+    @Override
+    public List<Film> getCommonFilms(int userId, int friendId) {
+        String sql = "SELECT f.* " +
+                "FROM films as f " +
+                "JOIN likes as l1 ON f.id = l1.film_id AND l1.user_id = ? " +
+                "JOIN likes as l2 ON f.id = l2.film_id AND l2.user_id = ? " +
+                "LEFT JOIN likes as l3 ON f.id = l3.film_id " +
+                "GROUP BY f.id " +
+                "ORDER BY COUNT(l3.user_id) DESC";
+
+        List<Film> films = jdbcTemplate.query(sql, getFilmMapper(), userId, friendId);
+        films.forEach(this :: loadGenres);
+        return films;
+    }
+
     private RowMapper<Film> getFilmMapper() {
         return (rs, rowNum) -> {
             Film film = new Film();
