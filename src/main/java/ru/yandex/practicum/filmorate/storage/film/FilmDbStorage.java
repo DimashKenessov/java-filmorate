@@ -127,7 +127,18 @@ public class FilmDbStorage implements FilmStorage {
         return films;
     }
 
-
+    @Override
+    public List<Film> findFilmsBySearchQuery(String query, List<String> by) {
+        String preparedQuery = "%" + query + "%";
+        String sql = "SELECT f.* FROM films f "
+                + "LEFT JOIN likes l ON f.id = l.film_id "
+                + "WHERE name LIKE ? "
+                + "GROUP BY f.id "
+                + "ORDER BY COUNT(l.user_id) DESC LIMIT ?";
+        List<Film> films = jdbcTemplate.query(sql, getFilmMapper(),preparedQuery, 10);
+        films.forEach(this::loadGenres);
+        return films;
+    }
 
     private RowMapper<Film> getFilmMapper() {
         return (rs, rowNum) -> {

@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
@@ -48,5 +49,12 @@ public class FilmService {
 
     public List<Film> getPopular(int count) {
         return filmStorage.getPopular(count);
+    }
+
+    public List<Film> getFilmsBySearchQuery(String query, List<String> by) {
+        if(!by.getFirst().equals("title")) {
+            throw new ValidationException("Поиск по параметру был передан неверно");
+        }
+        return filmStorage.findFilmsBySearchQuery(query, by);
     }
 }

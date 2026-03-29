@@ -11,6 +11,7 @@ import ru.yandex.practicum.filmorate.service.FilmService;
 
 import jakarta.validation.Valid;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -69,5 +70,12 @@ public class FilmController {
     public List<Film> getPopular(@RequestParam(defaultValue = "10") int count) {
         log.info("GET /films/popular?count={}", count);
         return filmService.getPopular(count);
+    }
+
+    @GetMapping("/search")
+    public List<Film> searchByTitleOrAuthor(@RequestParam(name = "query") String query, @RequestParam(name = "by",
+            defaultValue = "title") List<String> searchParams) {
+        log.info("GET /films/search?query={}&by={}", query, searchParams);
+        return filmService.getFilmsBySearchQuery(query, searchParams);
     }
 }
