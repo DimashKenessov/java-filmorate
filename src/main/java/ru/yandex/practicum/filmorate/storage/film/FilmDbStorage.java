@@ -130,9 +130,12 @@ public class FilmDbStorage implements FilmStorage {
                 + "ORDER BY COUNT(l.user_id) DESC LIMIT ?";
         List<Film> films = jdbcTemplate.query(sql, getFilmMapper(),preparedQuery, 10);
         films.forEach(this::loadGenres);
+        return films;
+    }
+
     public List<Film> getRecommendations(int userId) {
         String sqlLikes = "SELECT user_id, film_id FROM likes";
-        Map<Integer, Map<Integer, Double>> userLikes = new  HashMap<>();
+        Map<Integer, Map<Integer, Double>> userLikes = new HashMap<>();
 
         jdbcTemplate.query(sqlLikes, rs -> {
             int uId = rs.getInt("user_id");
@@ -146,8 +149,8 @@ public class FilmDbStorage implements FilmStorage {
             return Collections.emptyList();
         }
 
-        Map<Integer, Map<Integer, Double>> diff = new  HashMap<>();
-        Map<Integer, Map<Integer, Integer>> freq = new  HashMap<>();
+        Map<Integer, Map<Integer, Double>> diff = new HashMap<>();
+        Map<Integer, Map<Integer, Integer>> freq = new HashMap<>();
 
         for (Map<Integer, Double> userRatings : userLikes.values()) {
             for (Map.Entry<Integer, Double> itemI : userRatings.entrySet()) {
@@ -170,7 +173,7 @@ public class FilmDbStorage implements FilmStorage {
         for (Integer itemI : diff.keySet()) {
             for (Integer itemJ : diff.get(itemI).keySet()) {
                 double totalDiff = diff.get(itemI).get(itemJ);
-                int count =  freq.get(itemI).get(itemJ);
+                int count = freq.get(itemI).get(itemJ);
                 diff.get(itemI).put(itemJ, totalDiff / count);
             }
         }
@@ -219,11 +222,12 @@ public class FilmDbStorage implements FilmStorage {
         String filmSql = String.format("SELECT * FROM films WHERE id IN (%s)", inSql);
         List<Film> resultFilms = jdbcTemplate.query(filmSql, getFilmMapper(), recommendedFilmIds.toArray());
 
-        resultFilms.forEach(this :: loadGenres);
+        resultFilms.forEach(this::loadGenres);
         Map<Integer, Film> filmMap = resultFilms.stream().collect(Collectors.toMap(Film::getId, f -> f));
 
-        return recommendedFilmIds.stream().map(filmMap :: get).collect(Collectors.toList());
+        return recommendedFilmIds.stream().map(filmMap::get).collect(Collectors.toList());
     }
+
 
     @Override
     public List<Film> getCommonFilms(int userId, int friendId) {

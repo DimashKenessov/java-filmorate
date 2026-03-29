@@ -11,7 +11,6 @@ import ru.yandex.practicum.filmorate.service.FilmService;
 
 import jakarta.validation.Valid;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -77,6 +76,8 @@ public class FilmController {
             defaultValue = "title") List<String> searchParams) {
         log.info("GET /films/search?query={}&by={}", query, searchParams);
         return filmService.getFilmsBySearchQuery(query, searchParams);
+    }
+
     @DeleteMapping("/{id}")
     public void delete(@PathVariable int id) {
         log.info("DELETE /films/{}", id);

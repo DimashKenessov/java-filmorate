@@ -51,15 +51,17 @@ public class FilmService {
         return filmStorage.getPopular(count);
     }
 
+    public void delete(int id) {
+        filmStorage.findById(id);
+        filmStorage.delete(id);
+        log.info("Фильм с ID: {} удален", id);
+    }
+
     public List<Film> getFilmsBySearchQuery(String query, List<String> by) {
         if(!by.getFirst().equals("title")) {
             throw new ValidationException("Поиск по параметру был передан неверно");
         }
         return filmStorage.findFilmsBySearchQuery(query, by);
-    public void delete(int id) {
-        filmStorage.findById(id);
-        filmStorage.delete(id);
-        log.info("Фильм с ID: {} удален", id);
     }
 
     public List<Film> getRecommendations(int userId) {
