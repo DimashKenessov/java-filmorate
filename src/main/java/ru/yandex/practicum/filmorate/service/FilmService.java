@@ -3,7 +3,10 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.model.EventType;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Operation;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
@@ -15,6 +18,7 @@ import java.util.List;
 public class FilmService {
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
+    private final FeedService feedService;
 
     public Film findById(int id) {
         return filmStorage.findById(id);
@@ -36,6 +40,7 @@ public class FilmService {
         filmStorage.findById(filmId);
         userStorage.findById(userId);
         filmStorage.addLike(filmId, userId);
+        feedService.addEvent(userId, EventType.LIKE, Operation.ADD, filmId);
         log.info("User {} liked film {}", userId, filmId);
     }
 
@@ -43,10 +48,39 @@ public class FilmService {
         filmStorage.findById(filmId);
         userStorage.findById(userId);
         filmStorage.removeLike(filmId, userId);
+        feedService.addEvent(userId, EventType.LIKE, Operation.REMOVE, filmId);
         log.info("User {} removed like from film {}", userId, filmId);
     }
 
-    public List<Film> getPopular(int count) {
-        return filmStorage.getPopular(count);
+    public List<Film> getPopular(int count, Integer genreId, Integer year) {
+        return filmStorage.getPopular(count, genreId, year);
+    }
+    public List<Film> getFilmsByDirector(int directorId, String sortBy) {
+        return filmStorage.findFilmsByDirector(directorId, sortBy);
+    }
+
+    public void delete(int id) {
+        filmStorage.findById(id);
+        filmStorage.delete(id);
+        log.info("Фильм с ID: {} удален", id);
+    }
+
+    public List<Film> getFilmsBySearchQuery(String query, List<String> by) {
+        if(!by.getFirst().equals("title")) {
+            throw new ValidationException("Поиск по параметру был передан неверно");
+        }
+        return filmStorage.findFilmsBySearchQuery(query, by);
+    }
+
+    public List<Film> getRecommendations(int userId) {
+        userStorage.findById(userId);
+        return filmStorage.getRecommendations(userId);
+    }
+
+    public List<Film> getCommonFilms(int userId, int friendId) {
+        userStorage.findById(userId);
+        userStorage.findById(friendId);
+
+        return filmStorage.getCommonFilms(userId, friendId);
     }
 }
