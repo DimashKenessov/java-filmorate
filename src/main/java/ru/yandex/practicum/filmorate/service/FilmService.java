@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.EventType;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Operation;
@@ -62,6 +63,13 @@ public class FilmService {
         filmStorage.findById(id);
         filmStorage.delete(id);
         log.info("Фильм с ID: {} удален", id);
+    }
+
+    public List<Film> getFilmsBySearchQuery(String query, List<String> by) {
+        if(!by.getFirst().equals("title")) {
+            throw new ValidationException("Поиск по параметру был передан неверно");
+        }
+        return filmStorage.findFilmsBySearchQuery(query, by);
     }
 
     public List<Film> getRecommendations(int userId) {
