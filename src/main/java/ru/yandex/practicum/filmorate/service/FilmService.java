@@ -3,7 +3,9 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.model.EventType;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Operation;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
@@ -15,6 +17,7 @@ import java.util.List;
 public class FilmService {
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
+    private final FeedService feedService;
 
     public Film findById(int id) {
         return filmStorage.findById(id);
@@ -36,6 +39,7 @@ public class FilmService {
         filmStorage.findById(filmId);
         userStorage.findById(userId);
         filmStorage.addLike(filmId, userId);
+        feedService.addEvent(userId, EventType.LIKE, Operation.ADD, filmId);
         log.info("User {} liked film {}", userId, filmId);
     }
 
@@ -43,6 +47,7 @@ public class FilmService {
         filmStorage.findById(filmId);
         userStorage.findById(userId);
         filmStorage.removeLike(filmId, userId);
+        feedService.addEvent(userId, EventType.LIKE, Operation.REMOVE, filmId);
         log.info("User {} removed like from film {}", userId, filmId);
     }
 
