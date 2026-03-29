@@ -154,6 +154,7 @@ public class FilmDbStorage implements FilmStorage {
 
         List<Film> films = jdbcTemplate.query(sql.toString(), getFilmMapper(), params.toArray());
         films.forEach(this::loadGenres);
+        //films.forEach(this::loadDirectors);
         films.forEach(this::loadDirectors);
         return films;
     }
