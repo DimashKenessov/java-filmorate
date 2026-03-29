@@ -123,6 +123,10 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
+    public List<Film> getPopular(int count) {
+        return getPopular(count, null, null);
+    }
+    @Override
     public List<Film> getPopular(int count, Integer genreId, Integer year) {
         StringBuilder sql = new StringBuilder(
                 "SELECT f.* FROM films f LEFT JOIN likes l ON f.id = l.film_id ");
